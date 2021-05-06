@@ -3,8 +3,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    // protected Joystick joystick;
-    public Rigidbody2D circleBody;
+    public Joystick joystick;
+    public Rigidbody2D playRG;
     public float speed = 20f;
 
     private bool isMoveLeft;
@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         animator = GetComponent<Animator>();  
-        circleBody = GetComponent<Rigidbody2D>();  
+        playRG = GetComponent<Rigidbody2D>();  
         isMoveLeft = false; 
         isMoveRight = false;
     }
@@ -28,14 +28,16 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MovemntPlayer();
-    //   circleBody.MovePosition(circleBody.position + Vector2.right * speed * joystick.Horizontal * Time.deltaTime);
+       
 
         // rigidBody.velocity = new Vector2(joystick.Horizontal * 5f, 0);
     }
 
     private void FixedUpdate(){
-        circleBody.velocity = new Vector2(horizontalMove, circleBody.velocity.y);
+        playRG.velocity = new Vector2(horizontalMove, playRG.velocity.y);
         
+       
+      
         if (facingRight && horizontalMove < 0 && !isShooting){
             Flip();
         } else if (!facingRight && horizontalMove > 0 && !isShooting ){
@@ -49,43 +51,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void PointerDownLeft() {
-        isMoveLeft = true; 
-    }
-
-    public void PointerUpLeft() {
-        isMoveLeft = false; 
-    }
-
-    public void PointerDownRight() {
-        isMoveRight = true; 
-    }
-
-    public void PointerUpRight() {
-        isMoveRight = false; 
-    }
-
     private void MovemntPlayer() {
-        if (isMoveLeft){
-            horizontalMove = -speed;
-        } else if (isMoveRight){
-            horizontalMove = speed;
+        if(Mathf.Abs(joystick.Vertical) > 0.1f || Mathf.Abs(joystick.Horizontal) > 0.1f){
+            if (joystick.Horizontal < 0){
+                horizontalMove = -speed * joystick.Horizontal * -1;
+            } else if (joystick.Horizontal > 0){
+                horizontalMove = speed * joystick.Horizontal;
+            }
         } else {
             horizontalMove = 0;
         }
+        
     }
 
     public void Flip(){
-        
-        // Vector3 scaler = transform.localScale;
-        // scaler.x *= -1;
-        // transform.localxscale  = -1;
-        // if(facingRight) {
-        //   transform.localRotation = Quaternion.Euler(180, 0, 180);
-        //  }
-        //  else {
-        //     transform.localRotation = Quaternion.Euler(0, 0, 0);
-        //  }
          facingRight = !facingRight;
          transform.Rotate(new Vector3(0, 180, 0));
     }
